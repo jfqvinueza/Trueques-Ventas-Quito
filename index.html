@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -65,26 +66,6 @@
             margin-top: 5px;
         }
 
-        .product-buttons {
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .buy-btn, .share-btn {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .buy-btn:hover, .share-btn:hover {
-            background-color: #45a049;
-        }
-
         .overlay {
             position: fixed;
             top: 0;
@@ -121,9 +102,10 @@
             cursor: pointer;
         }
 
-        .next-btn, .prev-btn {
+        .next-btn {
             position: absolute;
             top: 50%;
+            right: 10px;
             background-color: #4CAF50;
             color: white;
             border: none;
@@ -132,48 +114,42 @@
             cursor: pointer;
         }
 
-        .next-btn {
-            right: 10px;
+        .prev-btn {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
         }
 
-        .prev-btn {
-            left: 10px;
+        .buy-btn, .share-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .share-btn {
+            background-color: #008CBA;
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         Trueques & Ventas Quito
     </div>
 
-    <div class="container">
-        <!-- Product 1 -->
-        <div class="product-card" onclick="showOverlay('product1')">
-            <img src="product1.jpg" alt="Producto 1" class="product-image">
-            <div class="product-info">
-                <div class="product-title">Producto 1</div>
-                <div class="product-price">$20.00</div>
-                <div class="product-buttons">
-                    <button class="buy-btn" onclick="buyNow(event, 'Producto 1')">Comprar</button>
-                    <button class="share-btn" onclick="shareProduct(event, 'Producto 1')">Compartir</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Product 2 -->
-        <div class="product-card" onclick="showOverlay('product2')">
-            <img src="product2.jpg" alt="Producto 2" class="product-image">
-            <div class="product-info">
-                <div class="product-title">Producto 2</div>
-                <div class="product-price">$30.00</div>
-                <div class="product-buttons">
-                    <button class="buy-btn" onclick="buyNow(event, 'Producto 2')">Comprar</button>
-                    <button class="share-btn" onclick="shareProduct(event, 'Producto 2')">Compartir</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Más productos... -->
+    <div class="container" id="productContainer">
+        <!-- Los productos se renderizarán aquí -->
     </div>
 
     <div class="overlay" id="overlay">
@@ -182,17 +158,59 @@
             <button class="prev-btn" onclick="showPrevImage()"><</button>
             <img id="overlayImage" src="" alt="Imagen ampliada" class="overlay-image">
             <button class="next-btn" onclick="showNextImage()">></button>
+            <button class="buy-btn" onclick="buyProduct()">Comprar</button>
+            <button class="share-btn" onclick="shareProduct()">Compartir</button>
         </div>
     </div>
 
     <script>
+        const images = {
+            product1: ['https://firebasestorage.googleapis.com/v0/b/psyched-service-419202.appspot.com/o/image%2FIMG-20240627-WA0001.jpg?alt=media&token=3bd14462-042f-48fa-aed1-580866d9631c'],
+            product2: ['https://firebasestorage.googleapis.com/v0/b/psyched-service-419202.appspot.com/o/image%2FIMG-20240628-WA0025.jpg?alt=media&token=bed205bf-9b07-417b-89c1-233767b56fd9', 'product2_2.jpg', 'product2_3.jpg'],
+            product3: ['https://firebasestorage.googleapis.com/v0/b/psyched-service-419202.appspot.com/o/image%2FIMG-20240628-WA0026.jpg?alt=media&token=40d6fdf6-a8ad-49d8-9a43-67f9570aa936', 'product3_2.jpg', 'product3_3.jpg'],
+            product4: ['product4.jpg', 'product4_2.jpg', 'product4_3.jpg'],
+        };
+
+        const productContainer = document.getElementById('productContainer');
+
+        const products = [
+            { title: 'Producto 1', price: '$20.00', key: 'product1' },
+            { title: 'Producto 2', price: '$30.00', key: 'product2' },
+            { title: 'Producto 3', price: '$40.00', key: 'product3' },
+            { title: 'Producto 4', price: '$50.00', key: 'product4' },
+        ];
+
+        // Renderiza los productos en la página
+        products.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.onclick = () => showOverlay(product.key);
+
+            const img = document.createElement('img');
+            img.src = images[product.key][0];
+            img.alt = product.title;
+            img.className = 'product-image';
+
+            const info = document.createElement('div');
+            info.className = 'product-info';
+
+            const title = document.createElement('div');
+            title.className = 'product-title';
+            title.innerText = product.title;
+
+            const price = document.createElement('div');
+            price.className = 'product-price';
+            price.innerText = product.price;
+
+            info.appendChild(title);
+            info.appendChild(price);
+            card.appendChild(img);
+            card.appendChild(info);
+            productContainer.appendChild(card);
+        });
+
         let currentProduct = '';
         let currentImageIndex = 0;
-        const images = {
-            product1: ['product1.jpg', 'product1_2.jpg', 'product1_3.jpg'],
-            product2: ['product2.jpg', 'product2_2.jpg', 'product2_3.jpg'],
-            // Añade más productos e imágenes según sea necesario
-        };
 
         function showOverlay(product) {
             currentProduct = product;
@@ -215,25 +233,23 @@
             document.getElementById('overlayImage').src = images[currentProduct][currentImageIndex];
         }
 
-        function buyNow(event, productName) {
-            event.stopPropagation();
-            window.location.href = `https://wa.me/0993731604?text=Estoy%20interesado%20en%20comprar%20${encodeURIComponent(productName)}`;
+        function buyProduct() {
+            window.location.href = `https://wa.me/593993731604?text=Estoy%20interesado%20en%20${currentProduct}`;
         }
 
-        function shareProduct(event, productName) {
-            event.stopPropagation();
-            const shareData = {
-                title: 'Producto',
-                text: `Echa un vistazo a este producto: ${productName}`,
-                url: window.location.href
-            };
-
-            try {
-                navigator.share(shareData);
-            } catch (err) {
-                alert('Tu navegador no soporta la función de compartir.');
+        function shareProduct() {
+            const shareText = `¡Mira este producto en Trueques & Ventas Quito! ${currentProduct}`;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Trueques & Ventas Quito',
+                    text: shareText,
+                    url: window.location.href
+                });
+            } else {
+                alert('La función de compartir no está soportada en este navegador.');
             }
         }
     </script>
 </body>
+
 </html>
